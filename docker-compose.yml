@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=sqlite:///./sentinel_fusion.db
+      - JWT_SECRET=sentinel_fusion_forensic_jwt_secret_key_2026_secure
+      - AI_PROVIDER=demo
+      - DEMO_MODE=true
+      - STORAGE_PATH=/app/storage
+    volumes:
+      - ./backend/storage:/app/storage
+      - ./backend/sentinel_fusion.db:/app/sentinel_fusion.db
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api
+    depends_on:
+      - backend
